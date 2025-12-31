@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Circuittelligence — Argonaut Diagnostic (Beta)</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ["Inter", "sans-serif"],
+              heading: ["Space Grotesk", "sans-serif"],
+            },
+            colors: {
+              brand: {
+                50: "#f0fdfa",
+                100: "#ccfbf1",
+                200: "#99f6e4",
+                300: "#5eead4",
+                400: "#2dd4bf",
+                500: "#14b8a6",
+                600: "#0d9488",
+                700: "#0f766e",
+                800: "#115e59",
+                900: "#134e4a",
+                950: "#042f2e",
+              },
+              accent: {
+                50: "#faf5ff",
+                100: "#f3e8ff",
+                200: "#e9d5ff",
+                300: "#d8b4fe",
+                400: "#c084fc",
+                500: "#a855f7",
+                600: "#9333ea",
+                700: "#7e22ce",
+                800: "#6b21a8",
+                900: "#581c87",
+                950: "#3b0764",
+              },
+            },
+            animation: {
+              "pulse-slow": "pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite",
+              float: "float 6s ease-in-out infinite",
+            },
+            keyframes: {
+              float: {
+                "0%, 100%": { transform: "translateY(0)" },
+                "50%": { transform: "translateY(-10px)" },
+              },
+            },
+          },
+        },
+      };
+    </script>
+
+    <style>
+      .glass {
+        background: rgba(17, 24, 39, 0.7);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+      }
+      .glass-card {
+        background: rgba(30, 41, 59, 0.4);
+        backdrop-filter: blur(8px);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        transition: all 0.3s ease;
+      }
+      .glass-card:hover {
+        background: rgba(30, 41, 59, 0.6);
+        border-color: rgba(45, 212, 191, 0.3);
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px -10px rgba(45, 212, 191, 0.1);
+      }
+
+      body {
+        background-color: #020617;
+        color: #f8fafc;
+        overflow-x: hidden;
+        background-image: url("/center.png");
+        background-repeat: no-repeat;
+        background-position: center 220px;
+        background-size: cover;
+      }
+
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #020617;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #1e293b;
+        border-radius: 4px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #334155;
+      }
+
+      .heading-gradient {
+        background: linear-gradient(135deg, #f8fafc 0%, #94a3b8 100%);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      .brand-gradient {
+        background: linear-gradient(135deg, #2dd4bf 0%, #a855f7 100%);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      /* Fix 2 — Scrolling: force scroll back on */
+      html, body {
+        height: auto !important;
+        min-height: 100%;
+        overflow-y: auto !important;
+        overflow-x: hidden;
+      }
+
+      body {
+        position: static !important;
+      }
+
+      #root, #__next, .app, .page {
+        height: auto !important;
+        min-height: 100%;
+        overflow: visible !important;
+      }
+
+
+    </style>
+  </head>
+
+  <body class="antialiased selection:bg-brand-500/30 selection:text-brand-200">
+    <!-- Background Effects -->
+    <div class="fixed inset-0 z-[-1]">
+      <div
+        class="absolute top-[-20%] right-[-10%] w-[800px] h-[800px] bg-brand-500/10 rounded-full blur-[120px] mix-blend-screen animate-pulse-slow"
+      ></div>
+      <div
+        class="absolute bottom-[-20%] left-[-10%] w-[600px] h-[600px] bg-accent-600/10 rounded-full blur-[100px] mix-blend-screen animate-pulse-slow"
+        style="animation-delay: 2s"
+      ></div>
+      <div
+        class="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 brightness-100 contrast-150"
+      ></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full z-50 glass border-b border-white/5">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-16">
+          <div class="flex-shrink-0 flex items-center gap-2">
+            <div
+              class="w-8 h-8 rounded bg-gradient-to-br from-brand-400 to-accent-500 flex items-center justify-center text-white font-bold text-lg"
+            >
+              C
+            </div>
+            <span
+              id="nav-title"
+              class="font-heading font-bold text-xl tracking-tight text-white"
+              >Circuittelligence</span
+            >
+          </div>
+
+          <div class="hidden md:block">
+            <div class="ml-10 flex items-baseline space-x-8">
+              <a
+                href="#offer"
+                class="text-sm font-medium text-gray-300 hover:text-white transition-colors"
+                >Offer</a
+              >
+              <a
+                href="#how"
+                class="text-sm font-medium text-gray-300 hover:text-white transition-colors"
+                >How it works</a
+              >
+              <a
+                href="#faq"
+                class="text-sm font-medium text-gray-300 hover:text-white transition-colors"
+                >FAQ</a
+              >
+            </div>
+          </div>
+
+          <div class="flex items-center gap-3">
+            <a
+              id="nav-apply"
+              href="#"
+              class="px-4 py-2 rounded-md bg-white/10 hover:bg-white/20 border border-white/10 text-sm font-medium transition-all duration-200"
+              >Apply</a
+            >
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <main>
+      <!-- Hero -->
+      <section
+        id="offer"
+        class="relative pt-32 pb-16 lg:pt-44 lg:pb-24 overflow-hidden"
+      >
+        <div
+          class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center"
+        >
+          <!-- Badge -->
+          <div
+            class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-500/10 border border-brand-500/20 text-brand-300 text-xs font-medium mb-8 cursor-default animate-float"
+          >
+            <span class="relative flex h-2 w-2">
+              <span
+                class="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-400 opacity-75"
+              ></span>
+              <span
+                class="relative inline-flex rounded-full h-2 w-2 bg-brand-500"
+              ></span>
+            </span>
+            Founder-Led Beta • Limited Slots
+          </div>
+
+          <h1
+            id="hero-title"
+            class="font-heading text-5xl md:text-7xl font-bold tracking-tight mb-8 leading-tight"
+          >
+            <span class="heading-gradient">Know exactly what to</span><br />
+            <span class="brand-gradient">automate — and what to refuse</span>
+          </h1>
+
+          <p
+            id="hero-subtitle"
+            class="mt-6 max-w-2xl mx-auto text-lg md:text-xl text-gray-400 leading-relaxed"
+          >
+            The Argonaut Diagnostic is a deterministic decision pack for
+            small businesses: scope, constraints, cost ceilings, and failure
+            modes — before you waste money on “AI.”
+          </p>
+
+          <div class="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
+            <a
+              id="cta-apply"
+              href="#"
+              class="w-full sm:w-auto px-8 py-3.5 rounded-lg bg-gradient-to-r from-brand-600 to-accent-600 hover:from-brand-500 hover:to-accent-500 text-white font-semibold shadow-lg shadow-brand-500/20 transition-all transform hover:scale-105 text-center"
+            >
+              Apply in 2 minutes
+            </a>
+            <a
+              id="cta-book"
+              href="#"
+              class="w-full sm:w-auto px-8 py-3.5 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-white font-medium transition-all backdrop-blur-sm text-center"
+            >
+              Book a 15-min fit call
+            </a>
+          </div>
+
+          <!-- Deliverables strip -->
+          <div class="mt-10 max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-4 text-left">
+            <div class="glass-card p-6 rounded-2xl">
+              <div class="text-sm text-gray-400 mb-2">You get</div>
+              <div class="font-semibold text-white">Do / Do-Not Automate list</div>
+              <div class="text-sm text-gray-400 mt-2">
+                Explicit inclusions/exclusions based on your constraints.
+              </div>
+            </div>
+            <div class="glass-card p-6 rounded-2xl">
+              <div class="text-sm text-gray-400 mb-2">You get</div>
+              <div class="font-semibold text-white">Cost ceilings + scope</div>
+              <div class="text-sm text-gray-400 mt-2">
+                Prevent runaway builds. Enforced boundaries.
+              </div>
+            </div>
+            <div class="glass-card p-6 rounded-2xl">
+              <div class="text-sm text-gray-400 mb-2">You get</div>
+              <div class="font-semibold text-white">Failure modes</div>
+              <div class="text-sm text-gray-400 mt-2">
+                What breaks first, and how to avoid it.
+              </div>
+            </div>
+          </div>
+
+          <!-- Optional hero image -->
+          <div
+            class="mt-16 relative rounded-xl border border-white/10 shadow-2xl glass overflow-hidden max-w-5xl mx-auto"
+          >
+            <div
+              class="absolute inset-0 bg-gradient-to-t from-[#020617] via-transparent to-transparent z-10"
+            ></div>
+            <img
+              id="hero-image"
+              src="hero.png"
+              alt="Circuittelligence"
+              class="w-full h-auto opacity-90 transform hover:scale-105 transition-transform duration-700"
+            />
+          </div>
+
+          <!-- Trust notes -->
+          <div class="mt-8 text-xs text-gray-500 max-w-3xl mx-auto">
+            No inflated claims. This is a founder-led beta offering. If you need full implementation, it’s scoped only after the diagnostic is complete.
+          </div>
+        </div>
+      </section>
+
+      <!-- How it works -->
+      <section id="how" class="py-20 relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="text-center mb-14">
+            <h2 class="font-heading text-3xl md:text-4xl font-bold mb-4">
+              How it works
+            </h2>
+            <p class="text-gray-400 max-w-2xl mx-auto">
+              One tight process. One deliverable. No wandering scope.
+            </p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="glass-card p-8 rounded-2xl">
+              <div class="text-brand-300 text-sm font-semibold mb-2">Step 1</div>
+              <h3 class="font-bold text-xl mb-3 text-white">Apply</h3>
+              <p class="text-gray-400 leading-relaxed">
+                2-minute intake: your tools, constraints, bottleneck, and budget ceiling.
+              </p>
+            </div>
+            <div class="glass-card p-8 rounded-2xl">
+              <div class="text-brand-300 text-sm font-semibold mb-2">Step 2</div>
+              <h3 class="font-bold text-xl mb-3 text-white">Fit call</h3>
+              <p class="text-gray-400 leading-relaxed">
+                15 minutes. If it’s not a fit, you’re told immediately. No upsell.
+              </p>
+            </div>
+            <div class="glass-card p-8 rounded-2xl">
+              <div class="text-brand-300 text-sm font-semibold mb-2">Step 3</div>
+              <h3 class="font-bold text-xl mb-3 text-white">Deliverable</h3>
+              <p class="text-gray-400 leading-relaxed">
+                A written diagnostic spec within 7 days: do/do-not list, scope, ceilings, failure modes.
+              </p>
+            </div>
+          </div>
+
+          <div class="mt-10 text-center">
+            <div class="inline-flex items-center gap-3 px-4 py-3 rounded-xl glass border border-white/10">
+              <div class="text-white font-semibold">Beta price:</div>
+              <div class="text-2xl font-bold text-white">$750</div>
+              <div class="text-gray-400 text-sm">(limited slots)</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- FAQ -->
+      <section id="faq" class="py-20 border-t border-white/5 bg-white/[0.02]">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="text-center mb-14">
+            <h2 class="font-heading text-3xl md:text-4xl font-bold mb-4">
+              FAQ
+            </h2>
+            <p class="text-gray-400">
+              Clear boundaries. No vague promises.
+            </p>
+          </div>
+
+          <div class="max-w-4xl mx-auto grid gap-6">
+            <div class="glass-card p-7 rounded-2xl">
+              <h3 class="font-semibold text-white mb-2">Do you implement the automation?</h3>
+              <p class="text-gray-400">
+                Not inside the diagnostic. Implementation is scoped only after the spec is delivered, and only if it can be executed within stated constraints.
+              </p>
+            </div>
+
+            <div class="glass-card p-7 rounded-2xl">
+              <h3 class="font-semibold text-white mb-2">What if I’m not a fit?</h3>
+              <p class="text-gray-400">
+                You’ll be told on the fit call. No pressure. No sale.
+              </p>
+            </div>
+
+            <div class="glass-card p-7 rounded-2xl">
+              <h3 class="font-semibold text-white mb-2">What do I walk away with?</h3>
+              <p class="text-gray-400">
+                A deterministic decision pack: do/do-not list, scope boundaries, cost ceilings, failure modes, and a prioritized plan.
+              </p>
+            </div>
+          </div>
+
+          <div class="mt-12 text-center">
+            <a
+              id="cta-apply-2"
+              href="#"
+              class="inline-flex items-center justify-center px-8 py-3.5 rounded-lg bg-gradient-to-r from-brand-600 to-accent-600 hover:from-brand-500 hover:to-accent-500 text-white font-semibold shadow-lg shadow-brand-500/20 transition-all transform hover:scale-105"
+            >
+              Apply now
+            </a>
+            <div class="text-xs text-gray-500 mt-3">
+              You can publish this page even if Directus is offline.
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="border-t border-white/5 py-12 bg-[#000000]">
+      <div
+        class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center text-gray-500 text-sm"
+      >
+        <div id="footer-text">
+          &copy; 2025 Circuittelligence. All rights reserved.
+        </div>
+        <div class="flex gap-6 mt-4 md:mt-0">
+          <a href="#" class="hover:text-white transition-colors">Privacy</a>
+          <a href="#" class="hover:text-white transition-colors">Terms</a>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Optional Directus Hydration (safe) -->
+    <script>
+      /**
+       * LAUNCH CONFIG (edit these 4)
+       */
+      const APPLY_URL = "mailto:info@circuittelligence.com?subject=Argonaut%20Diagnostic%20-%20Apply&body=Business%20name%3A%0AWebsite%3A%0AWhat%20do%20you%20want%20to%20automate%3A%0ABudget%20range%3A%0ATimeline%3A%0A";
+      const BOOK_URL  = "mailto:info@circuittelligence.com?subject=15-min%20fit%20call&body=Best%20times%20to%20meet%3A%0ATimezone%3A%0A";
+      const DIRECTUS_URL = "";                         // leave "" if not using
+      const READ_TOKEN = "";                           // optional
+
+      // Wire CTAs immediately (no dependency on Directus)
+      function wireCtas() {
+        const ids = ["nav-apply", "cta-apply", "cta-apply-2"];
+        ids.forEach((id) => {
+          const el = document.getElementById(id);
+          if (el) el.href = APPLY_URL;
+        });
+        const book = document.getElementById("cta-book");
+        if (book) book.href = BOOK_URL;
+      }
+
+      const getUrl = (path) =>
+        `${DIRECTUS_URL}${path}${READ_TOKEN ? "?access_token=" + READ_TOKEN : ""}`;
+      const getAsset = (id) => (id ? `${DIRECTUS_URL}/assets/${id}` : null);
+
+      async function hydrateFromDirectus() {
+        if (!DIRECTUS_URL) return; // Directus disabled
+
+        try {
+          // Global Settings (optional)
+          const globalRes = await fetch(getUrl("/items/global_settings")).catch(() => null);
+          if (globalRes && globalRes.ok) {
+            const { data } = await globalRes.json();
+            if (data?.site_title) {
+              document.title = data.site_title;
+              const navTitle = document.getElementById("nav-title");
+              if (navTitle) navTitle.textContent = data.site_title;
+            }
+            if (data?.footer_text) {
+              const ft = document.getElementById("footer-text");
+              if (ft) ft.innerHTML = data.footer_text;
+            }
+          }
+
+          // Home Page (optional)
+          const pageRes = await fetch(getUrl("/items/pages?filter[slug][_eq]=home")).catch(() => null);
+          if (pageRes && pageRes.ok) {
+            const { data } = await pageRes.json();
+            const homePage = Array.isArray(data) && data.length ? data[0] : null;
+            if (!homePage) return;
+
+            if (homePage.title) {
+              const ht = document.getElementById("hero-title");
+              if (ht) ht.textContent = homePage.title; // keep simple, no HTML injection
+            }
+
+            if (homePage.content) {
+              const tempDiv = document.createElement("div");
+              tempDiv.innerHTML = homePage.content;
+              const hs = document.getElementById("hero-subtitle");
+              if (hs) hs.textContent = tempDiv.textContent || tempDiv.innerText || "";
+            }
+
+            if (homePage.hero_image) {
+              const img = document.getElementById("hero-image");
+              if (img) img.src = getAsset(homePage.hero_image);
+            }
+          }
+        } catch (err) {
+          // Silent failure: page must remain functional
+          console.warn("Directus hydration skipped:", err);
+        }
+      }
+
+      document.addEventListener("DOMContentLoaded", () => {
+        wireCtas();
+        hydrateFromDirectus();
+      });
+    </script>
+  </body>
+</html>
